@@ -35,10 +35,32 @@ def match_history(first_team, second_team, n_last_match=5):
     return answer
 
 
-if __name__ == "__main__":
-    for y in match_history(u'Зенит', u'Спартак'):
-        for x in y:
-            print(x, end=' | ')
-        print()
+def grab_team(uri):
+    """
+    Функция из сайта sports.ru выдирает название команд и возварщает список из них
+    """
+    teams = {}
+    g = Grab()
+    g.go(uri)
+    try:
+        get_teams = g.css_list('div.pageLayout div.contentLayout div.box div.layout-columns.second-page div.mainPart div.match-center div.tabs-container div ul li.panel.active-panel div.stat.mB6 table.stat-table.table tbody tr td.name-td.alLeft.bordR a')
+    except IndexError:
+        return teams
+    for t in get_teams:
+        teams.update({t.text: t.items()[0][1]})
+    return teams
 
-    #match_history(u'Реал', u'Анжи')
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) > 1:
+        for y in match_history(unicode(sys.argv[1], 'utf-8'), unicode(sys.argv[2], 'utf-8')):
+            for x in y:
+                print(x, end=' | ')
+            print()
+    else:
+        for y in match_history(u'Англия', u'Италия'):
+            for x in y:
+                print(x, end=' | ')
+            print()
+    print(grab_team('http://www.sports.ru/stat/football/russia/'))
