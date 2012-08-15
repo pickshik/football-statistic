@@ -37,4 +37,4 @@ def main(team1, team2):
 
 
 if __name__ == '__main__':
-    main(u'Спартак', u'Рубин')
+    main(u'Динамо', u'Терек')

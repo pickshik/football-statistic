@@ -15,12 +15,12 @@ def match_history(first_team, second_team, n_last_match=5):
     g = Grab(log_file="/tmp/graber.log")
     g.go(URI)
     if g.search(u'Ранее не встречались'):
-        print('fail')
+        return []
     else:
         try:
             all_table = g.xpath('/html/body/table[4]/tr/td[2]/table')
         except IndexError:
-            print('fail')
+            return []
         answer = []
         for y in all_table:
             a_temp = []
@@ -105,5 +105,6 @@ if __name__ == "__main__":
             for x in y:
                 print(x, end=' | ')
             print()
-    #print(grab_team('http://www.sports.ru/stat/football/russia/'))
-    grab_team_static('http://www.sports.ru/tags/1044511.html?type=champ')
+
+    for name, data in grab_team_static('http://www.sports.ru/tags/1044511.html?type=champ').items():
+        print(name + ':' + data)

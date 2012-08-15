@@ -22,8 +22,7 @@ championats = set({'http://www.sports.ru/stat/football/russia',
                 'http://www.sports.ru/stat/football/sweden',
                 'http://www.sports.ru/stat/football/belarus',
                 'http://www.sports.ru/stat/football/finland',
-                'http://www.sports.ru/stat/football/iceland',
-})
+                'http://www.sports.ru/stat/football/iceland'})
 
 DB_URI = '127.0.0.1'
 
@@ -37,17 +36,20 @@ def get_db_cursor():
 
 
 def add2bd():
+    """
+    Добавляет в базу название команды
+    """
     db = get_db_cursor()
     teams = db.teams
     for champ in championats:
         for team, team_uri in grab_team(champ).items():
-            tm = teams.find_one({team: team_uri})
+            tm = teams.find_one({'name': team})
             if not tm:
                 print 'Add {0}:{1}'.format(team.encode('utf-8'), team_uri.encode('utf-8'))
-                teams.insert({team: team_uri})
+                teams.insert({'name': team, 'uri': team_uri})
             else:
                 print '{0}:{1} exist'.format(team.encode('utf-8'), team_uri.encode('utf-8'))
 
 
 if __name__ == '__main__':
-	add2bd()
+    add2bd()
