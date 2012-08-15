@@ -4,6 +4,7 @@
 from pymongo import Connection
 from graber import grab_team
 
+
 championats = set({'http://www.sports.ru/stat/football/russia',
                 'http://www.sports.ru/stat/football/england',
                 'http://www.sports.ru/stat/football/germany',
@@ -24,3 +25,22 @@ championats = set({'http://www.sports.ru/stat/football/russia',
                 'http://www.sports.ru/stat/football/iceland',
 })
 
+DB_URI = '127.0.0.1'
+
+
+def get_db_cursor():
+    """
+    Возвращает сылку на коллекцию
+    """
+    cursor = Connection(DB_URI)
+    return cursor.fstatistic
+
+
+def add2bd():
+    db = get_db_cursor()
+    teams = db.teams
+    for champ in championats:
+        for team, team_uri in grab_team(champ).items():
+            tm = teams.find_one({team: team_uri})
+            if not tm:
+                teams.insert({team: team_uri})
