@@ -51,6 +51,48 @@ def grab_team(uri):
     return teams
 
 
+def grab_team_static(uri):
+    """
+    Функция которая возвращает словарь со статистикой выступления команды
+    """
+    def from_info(d):
+        temp = []
+        for x in d:
+            if x.text == None:
+                temp.append(x.xpath('b')[0].text)
+            else:
+                temp.append(x.text)
+        return {temp[0]: temp[1]}
+
+    def from_table(d):
+        temp = []
+        for x in d:
+            if x.text == None:
+                temp.append('0')
+            else:
+                temp.append(x.text.strip())
+        return {temp[0]: ' '.join(temp[1:])}
+
+    data = {}
+    g = Grab()
+    g.go(uri)
+
+    try:
+        t = g.css('div.pageLayout div.contentLayout div.box div.layout-columns.second-page div.mainPart div.info-block div.about table tbody')
+    except IndexError:
+        pass
+    data.update(from_info(t.xpath('tr[1]/td')))
+    data.update(from_info(t.xpath('tr[2]/td')))
+
+    try:
+        t = g.xpath('/html/body/div/div[3]/div/div/div/div[5]/table/tbody')
+    except IndexError:
+        pass
+    for y in t:
+        data.update(from_table(y))
+
+    return data
+
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1:
@@ -63,4 +105,5 @@ if __name__ == "__main__":
             for x in y:
                 print(x, end=' | ')
             print()
-    print(grab_team('http://www.sports.ru/stat/football/russia/'))
+    #print(grab_team('http://www.sports.ru/stat/football/russia/'))
+    grab_team_static('http://www.sports.ru/tags/1044511.html?type=champ')
