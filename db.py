@@ -43,4 +43,11 @@ def add2bd():
         for team, team_uri in grab_team(champ).items():
             tm = teams.find_one({team: team_uri})
             if not tm:
+                print 'Add {0}:{1}'.format(team.encode('utf-8'), team_uri.encode('utf-8'))
                 teams.insert({team: team_uri})
+            else:
+                print '{0}:{1} exist'.format(team.encode('utf-8'), team_uri.encode('utf-8'))
+
+
+if __name__ == '__main__':
+	add2bd()
