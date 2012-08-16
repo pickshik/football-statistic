@@ -93,6 +93,27 @@ def grab_team_static(uri):
 
     return data
 
+
+def grab_calendar(uri):
+    """
+    Функция возвращет множество в котором сожержаться кортежи из 3 элементов
+    1 элемент - 1 команда, 2 элемент - счет, 3 элемент - 2 команда
+    """
+    data = set()
+
+    g = Grab()
+    g.go(uri)
+
+    try:
+        t = g.xpath('/html/body/div[4]/div[3]/div/div/div/div[4]/div[2]/table/tbody')
+    except IndexError:
+        return data
+    for y in t:
+        data.add((y.xpath('td[3]/div/a')[0].text, y.xpath('td[4]/a/b')[0].text, y.xpath('td[5]/div/a')[0].text))
+
+    return data
+
+
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1:
@@ -108,3 +129,5 @@ if __name__ == "__main__":
 
     for name, data in grab_team_static('http://www.sports.ru/tags/1044511.html?type=champ').items():
         print(name + ':' + data)
+
+    print(grab_calendar('http://www.sports.ru/stat/football/russia'))
