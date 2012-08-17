@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
-from db import get_db_cursor
-from graber import grab_team_static, match_history
+from db import get_db_cursor, championats
+from graber import grab_team_static, match_history, grab_calendar
 
 
-def main(team1, team2):
-    print('Играют {0} - {1}'.format(team1.encode('utf-8'), team2.encode('utf-8')))
+def main_out(team1, team2):
+    #print('Играют {0} - {1}'.format(team1.encode('utf-8'), team2.encode('utf-8')))
     for y in match_history(team1, team2):
             for x in y:
                 print(x, end=' | ')
@@ -23,7 +23,10 @@ def main(team1, team2):
         print(team1)
         print()
         for name, data in grab_team_static(tm1['uri'] + '?type=champ').items():
-            print(name + ': ' + data)
+            try:
+                print(name + ': ' + data)
+            except TypeError:
+                continue
 
     tm2 = teams.find_one({'name': team2})
     if not tm2:
@@ -33,8 +36,14 @@ def main(team1, team2):
         print(team2)
         print()
         for name, data in grab_team_static(tm2['uri'] + '?type=champ').items():
-            print(name + ': ' + data)
+            try:
+                print(name + ': ' + data)
+            except TypeError:
+                continue
 
 
 if __name__ == '__main__':
-    main(u'Динамо', u'Терек')
+    for champ in championats:
+        for team1, score, team2 in grab_calendar(champ):
+            print(team1, score, team2)
+            main_out(team1, team2)
