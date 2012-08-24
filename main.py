@@ -43,7 +43,18 @@ def main_out(team1, team2):
 
 
 if __name__ == '__main__':
-    for champ in championats:
-        for team1, score, team2 in grab_calendar(champ):
-            print(team1, score, team2)
-            main_out(team1, team2)
+    import argparse
+
+    def right_args(args):
+        if len(args) > 1:
+            return ' '.join(args)
+        else:
+            return args[0]
+
+    parser = argparse.ArgumentParser(add_help=True, version='0.0.1')
+    parser.add_argument("-team1", nargs='*', action="store", required=True, dest='team1', help="the name of the first team")
+    parser.add_argument("-team2", nargs='*', action="store", required=True, dest='team2', help="the name of the second team")
+    args = parser.parse_args()
+    team1 = right_args(args.team1)
+    team2 = right_args(args.team2)
+    main_out(unicode(team1, "utf-8"), unicode(team2, "utf-8"))
