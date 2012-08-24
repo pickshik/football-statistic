@@ -122,5 +122,5 @@ def add2studydb():
 
 
 if __name__ == '__main__':
-    #add2bd()
-    add2studydb()
+    add2bd()
+    #add2studydb()

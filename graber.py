@@ -73,6 +73,16 @@ def grab_team_static(uri):
                 temp.append(x.text.strip())
         return {temp[0]: ' '.join(temp[1:])}
 
+    def get_date(uri):
+        g = Grab()
+        g.go(uri)
+
+        try:
+            t = g.xpath('/html/body/div[4]/div[3]/div/div[3]/div[3]/p[2]')
+        except IndexError:
+            return None
+        return t.text
+
     data = {}
     g = Grab()
     g.go(uri)
@@ -83,6 +93,8 @@ def grab_team_static(uri):
         pass
     data.update(from_info(t.xpath('tr[1]/td')))
     data.update(from_info(t.xpath('tr[2]/td')))
+    for x in t.xpath('tr[3]/td[2]/span/a'):
+        data.update({x.values()[0]: get_date('http://www.sports.ru' + x.values()[-1])})
 
     try:
         t = g.xpath('/html/body/div/div[3]/div/div/div/div[5]/table/tbody')
@@ -128,6 +140,9 @@ if __name__ == "__main__":
             print()
 
     for name, data in grab_team_static('http://www.sports.ru/tags/1044511.html?type=champ').items():
-        print(name + ':' + data)
+        try:
+            print(name + ': ' + data)
+        except TypeError:
+            print('fail')
 
     print(grab_calendar('http://www.sports.ru/stat/football/russia'))
