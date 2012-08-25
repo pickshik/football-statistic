@@ -7,7 +7,11 @@ from graber import grab_team_static, match_history, grab_calendar
 
 
 def main_out(team1, team2):
-    #print('Играют {0} - {1}'.format(team1.encode('utf-8'), team2.encode('utf-8')))
+    def key_for_sort(x):
+        if x[0] != None and x[1] != None:
+            return len(x[0] + x[1])
+
+    print('#----------------------------------------- {0} - {1} ---------------------------#'.format(team1.encode('utf-8'), team2.encode('utf-8')))
     for y in match_history(team1, team2):
             for x in y:
                 print(x, end=' | ')
@@ -15,31 +19,33 @@ def main_out(team1, team2):
 
     db = get_db_cursor()
     teams = db.teams
+    print('-*-'*20)
 
     tm1 = teams.find_one({'name': team1})
     if not tm1:
         print('Команды с названием {0} нет :('.format(team1.encode('utf-8')))
     else:
         print(team1)
-        print()
-        for name, data in grab_team_static(tm1['uri'] + '?type=champ').items():
+        print("-"*40)
+        for name, data in iter(sorted(grab_team_static(tm1['uri'] + '?type=champ').items(), key=key_for_sort)):
             try:
                 print(name + ': ' + data)
             except TypeError:
                 continue
+    print('-*-'*20)
 
     tm2 = teams.find_one({'name': team2})
     if not tm2:
         print('Команды с названием {0} нет :('.format(team2.encode('utf-8')))
     else:
-        print()
         print(team2)
-        print()
-        for name, data in grab_team_static(tm2['uri'] + '?type=champ').items():
+        print("-"*40)
+        for name, data in iter(sorted(grab_team_static(tm2['uri'] + '?type=champ').items(), key=key_for_sort)):
             try:
                 print(name + ': ' + data)
             except TypeError:
                 continue
+    print('-*-'*20)
 
 
 if __name__ == '__main__':
